@@ -1,6 +1,8 @@
 # Configuração Proposta comercial N8N
 
 ## Para utilizar o copia e cola, é necessário ativar a opção Expression em cada campo
+<img width="305" alt="image" src="https://github.com/user-attachments/assets/99e266f9-7dbd-4772-b298-8bed28fd9349">
+
 
 
 ## On form Submission
