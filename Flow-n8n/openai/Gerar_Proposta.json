@@ -1,0 +1,206 @@
+{
+  "name": "Gerar Proposta",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Ai Docs",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Empresa"
+            },
+            {
+              "fieldLabel": "Tema"
+            },
+            {
+              "fieldLabel": "Data",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Subtitulo"
+            },
+            {
+              "fieldLabel": "Contexto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b649c96e-993f-4224-ba65-4ed63ad0765c",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        580,
+        400
+      ],
+      "webhookId": "262566ba-b7c3-49b0-b772-aa65bc806e55"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f366c05c-2f77-422a-aeb0-35e79e42dd72",
+              "name": "chatInput",
+              "value": "=Tema: {{ $json.Tema }}, Subtitulo: {{ $json.Subtitulo }}, Contexto: {{ $json.Contexto }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8cd1e298-a631-4c1f-9f6b-747b650a8bb9",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1UuQ_Yx-AmRZyoOMbQozCr1HAu1rYxgIIf-ue87-Zw_k/edit?tab=t.0",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "={empresa}",
+              "replaceText": "={{ $('On form submission').item.json.Empresa }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{tema}",
+              "replaceText": "={{ $('On form submission').item.json.Tema }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{data}",
+              "replaceText": "={{ $('On form submission').item.json.Data }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{subtitulo}",
+              "replaceText": "={{ $('On form submission').item.json.Subtitulo }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{contexto}",
+              "replaceText": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "id": "25ffdc60-6215-48d7-bcbc-90b363e8d934",
+      "name": "Google Docs",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1580,
+        400
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "hVEAgkFZdt06lnrc",
+          "name": "Google Service [Luis]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "options": {
+          "systemMessage": "=Você é um especialista em criar apresentações empresariais. Com base no tema, subtítulo e contexto fornecidos, crie um texto inovador e envolvente que reflita o contexto de forma clara e objetiva. O texto não deve conter menções diretas ao tema ou subtítulo. Retorne apenas o conteúdo relacionado ao contexto\n{{ $json.chatInput }}\n\nResponsa em Português "
+        }
+      },
+      "id": "5fcdaf2c-c688-499a-8458-30c1504643c5",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d974d108-f72b-492b-8b7a-8673f69e811e",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fdoKbjAgFR5DjNwL",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f155aff-fcdc-40a4-a008-af44e2e8ed19",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fdfed2358274b2c495ec5440ed33b377cb00add86167ad8439ee5070d4d728a"
+  },
+  "id": "87MsqeE3RsWrjzvd",
+  "tags": []
+}
